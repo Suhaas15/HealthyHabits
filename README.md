@@ -1,17 +1,47 @@
-# healthyhabits_flutter
+# Healthy Habits
 
-A new Flutter project.
+An interactive story app that teaches children healthy habits through choice-based adventures — built for iPad.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## What it does
 
-A few resources to get you started if this is your first Flutter project:
+- Kids pick a habit (sleep, hydration, movement, screen time, hygiene, healthy eating) and play through a short story as a character
+- At key moments, they choose between two illustrated options — one healthy, one not
+- Every choice comes with feedback, audio narration, and a collected tip they keep at the end
+- Fully bilingual — kids (or parents) can switch between English and Spanish at any time
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Why it works
+
+- **Story-driven** — habits are taught through consequences in a narrative, not lectures
+- **AI-generated illustrations** — every scene has a unique image generated for that habit and moment, making it feel alive
+- **Short sessions** — each story takes ~3 minutes, designed for attention spans
+- **Replayable** — options are shuffled on every play, so kids don't just memorise answers
+
+---
+
+## Technical overview
+
+**Stack:** Flutter (iOS/iPad only) · Dart
+
+**AI & content**
+- Images generated via OpenRouter (Gemini 2.5 Flash) on first play, then permanently cached to disk — zero repeat API calls
+- TTS narration via `flutter_tts` with iOS audio session configured for reliable playback
+
+**Architecture**
+- `StoryEngineProvider` — state machine managing 7 phases (intro → loading → narrating → asking → responding → transitioning → ending)
+- `ImageGenerationProvider` — 3-tier cache: in-memory → SharedPreferences manifest → file system (`Documents/habits/{habitId}/`)
+- `AudioProvider` — wraps `flutter_tts` with iOS `AVAudioSession` playback category
+- `GoRouter` for navigation, `Provider` for state, `flutter_animate` for animations
+
+**To run**
+```bash
+# Copy your .env file with OPENROUTER_API_KEY
+cp .env.example .env
+
+flutter pub get
+cd ios && pod install && cd ..
+flutter run -d "iPad Air"
+```
