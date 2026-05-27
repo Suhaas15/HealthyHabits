@@ -28,6 +28,34 @@ class StoryOption {
   });
 }
 
+enum SceneType {
+  choices,
+  tapCollect,
+  sorting,
+}
+
+class TapItem {
+  final String emoji;
+  final BilingualText label;
+  final bool isHealthy;
+
+  const TapItem({
+    required this.emoji,
+    required this.label,
+    required this.isHealthy,
+  });
+}
+
+class SortingStep {
+  final String emoji;
+  final BilingualText text;
+
+  const SortingStep({
+    required this.emoji,
+    required this.text,
+  });
+}
+
 // One scene in the story
 class StoryScene {
   final String id;
@@ -37,6 +65,10 @@ class StoryScene {
   final BilingualText question;
   final List<StoryOption> options;
   final BilingualText tip;
+  final SceneType sceneType;
+  final String? completionEmoji;
+  final List<TapItem>? tapItems;
+  final List<SortingStep>? sortingSteps;
 
   const StoryScene({
     required this.id,
@@ -46,6 +78,10 @@ class StoryScene {
     required this.question,
     required this.options,
     required this.tip,
+    this.sceneType = SceneType.choices,
+    this.completionEmoji,
+    this.tapItems,
+    this.sortingSteps,
   });
 }
 

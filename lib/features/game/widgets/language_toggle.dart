@@ -25,7 +25,7 @@ class LanguageToggle extends StatelessWidget {
         ),
         child: Center(
           child: Text(
-            language == 'en' ? '🇺🇸 EN' : '🇪🇸 ES',
+            language == 'en' ? '🇪🇸 ES' : '🇺🇸 EN',
             style: GoogleFonts.nunito(
               fontSize: 15,
               fontWeight: FontWeight.w600,

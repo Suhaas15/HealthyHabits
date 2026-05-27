@@ -11,16 +11,18 @@ class AudioProvider extends ChangeNotifier {
 
   Future<void> _initTts() async {
     // iOS requires the audio session to be configured before TTS will produce sound.
-    await _tts.setSharedInstance(true);
-    await _tts.setIosAudioCategory(
-      IosTextToSpeechAudioCategory.playback,
-      [
-        IosTextToSpeechAudioCategoryOptions.allowBluetooth,
-        IosTextToSpeechAudioCategoryOptions.allowBluetoothA2DP,
-        IosTextToSpeechAudioCategoryOptions.mixWithOthers,
-      ],
-      IosTextToSpeechAudioMode.defaultMode,
-    );
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      await _tts.setSharedInstance(true);
+      await _tts.setIosAudioCategory(
+        IosTextToSpeechAudioCategory.playback,
+        [
+          IosTextToSpeechAudioCategoryOptions.allowBluetooth,
+          IosTextToSpeechAudioCategoryOptions.allowBluetoothA2DP,
+          IosTextToSpeechAudioCategoryOptions.mixWithOthers,
+        ],
+        IosTextToSpeechAudioMode.defaultMode,
+      );
+    }
     await _tts.setVolume(1.0);
     _tts.setCompletionHandler(() {
       _isSpeaking = false;
