@@ -6,6 +6,8 @@ enum StoryPhase {
   loadingImages,
   narrating,
   asking,
+  tapping,
+  sorting,
   respondingCorrect,
   respondingWrong,
   transitioning,
@@ -48,7 +50,18 @@ class StoryEngineProvider extends ChangeNotifier {
   }
 
   void onNarrationComplete() {
-    _phase = StoryPhase.asking;
+    final scene = currentScene;
+    if (scene != null) {
+      if (scene.sceneType == SceneType.tapCollect) {
+        _phase = StoryPhase.tapping;
+      } else if (scene.sceneType == SceneType.sorting) {
+        _phase = StoryPhase.sorting;
+      } else {
+        _phase = StoryPhase.asking;
+      }
+    } else {
+      _phase = StoryPhase.asking;
+    }
     notifyListeners();
   }
 
@@ -76,6 +89,25 @@ class StoryEngineProvider extends ChangeNotifier {
       }
     } else {
       _phase = StoryPhase.respondingWrong;
+    }
+    notifyListeners();
+  }
+
+  void completeScene() {
+    _phase = StoryPhase.respondingCorrect;
+    final scene = _sceneIndex >= 1 ? _scenes[_sceneIndex - 1] : null;
+    if (scene != null) {
+      final alreadyCollected = _collectedTips.any((t) => t.id == scene.id);
+      if (!alreadyCollected) {
+        _collectedTips = [
+          ..._collectedTips,
+          CollectedTip(
+            id: scene.id,
+            tip: scene.tip,
+            emoji: scene.completionEmoji ?? '✨',
+          ),
+        ];
+      }
     }
     notifyListeners();
   }

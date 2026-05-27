@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'data/habits/habit_registry.dart';
+import 'data/models.dart';
 import 'providers/story_engine_provider.dart';
 // ignore: unused_import
 import '../../debug_globals.dart'; // remove before production
@@ -12,6 +13,8 @@ import 'widgets/story_intro.dart';
 import 'widgets/loading_screen.dart';
 import 'widgets/split_choice_scene.dart';
 import 'widgets/story_ending.dart';
+import 'widgets/tap_collect_scene.dart';
+import 'widgets/sorting_scene.dart';
 
 class HabitGamePage extends StatelessWidget {
   final String habitId;
@@ -191,22 +194,56 @@ class _HabitGameViewState extends State<_HabitGameView> {
                 }
 
                 if (isScene && engine.currentScene != null) {
-                  return SplitChoiceScene(
-                    scene: engine.currentScene!,
-                    sceneIndex: engine.sceneIndex,
-                    scenePhase: phase,
-                    selectedOptionId: engine.selectedOptionId,
-                    language: language,
-                    getImage: imageProvider.getImage,
-                    onNarrationComplete: engine.onNarrationComplete,
-                    onSelectOption: engine.selectOption,
-                    onRetry: engine.retryQuestion,
-                    onAdvance: _handleAdvance,
-                    speakTip: audioProvider.speakTip,
-                    onToggleLanguage: langProvider.toggleLanguage,
-                    onBack: _handleBack,
-                    storyStrings: widget.habit.strings,
-                  );
+                  final scene = engine.currentScene!;
+                  if (scene.sceneType == SceneType.tapCollect) {
+                    return TapCollectScene(
+                      scene: scene,
+                      sceneIndex: engine.sceneIndex,
+                      scenePhase: phase,
+                      language: language,
+                      onNarrationComplete: engine.onNarrationComplete,
+                      onComplete: engine.completeScene,
+                      speakTip: audioProvider.speakTip,
+                      onToggleLanguage: langProvider.toggleLanguage,
+                      onBack: _handleBack,
+                      storyStrings: widget.habit.strings,
+                      habitColor: widget.habit.habitColor,
+                      characterEmoji: widget.habit.characterEmoji,
+                      onAdvance: _handleAdvance,
+                    );
+                  } else if (scene.sceneType == SceneType.sorting) {
+                    return SortingScene(
+                      scene: scene,
+                      sceneIndex: engine.sceneIndex,
+                      scenePhase: phase,
+                      language: language,
+                      onNarrationComplete: engine.onNarrationComplete,
+                      onComplete: engine.completeScene,
+                      speakTip: audioProvider.speakTip,
+                      onToggleLanguage: langProvider.toggleLanguage,
+                      onBack: _handleBack,
+                      storyStrings: widget.habit.strings,
+                      habitColor: widget.habit.habitColor,
+                      onAdvance: _handleAdvance,
+                    );
+                  } else {
+                    return SplitChoiceScene(
+                      scene: scene,
+                      sceneIndex: engine.sceneIndex,
+                      scenePhase: phase,
+                      selectedOptionId: engine.selectedOptionId,
+                      language: language,
+                      getImage: imageProvider.getImage,
+                      onNarrationComplete: engine.onNarrationComplete,
+                      onSelectOption: engine.selectOption,
+                      onRetry: engine.retryQuestion,
+                      onAdvance: _handleAdvance,
+                      speakTip: audioProvider.speakTip,
+                      onToggleLanguage: langProvider.toggleLanguage,
+                      onBack: _handleBack,
+                      storyStrings: widget.habit.strings,
+                    );
+                  }
                 }
 
                 if (isEnding) {
