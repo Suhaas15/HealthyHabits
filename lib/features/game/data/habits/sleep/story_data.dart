@@ -4,7 +4,7 @@ import '../../models.dart';
 final List<StoryScene> sleepScenes = [
   StoryScene(
     id: 'awake',
-    roomGradient: [Color(0xFF2D1B69), Color(0xFF4C1D95), Color(0xFF7C3AED), Color(0xFF2D1B69)],
+    roomGradient: [Color(0xFF9B59B6), Color(0xFF7C3AED), Color(0xFFA78BFA), Color(0xFF9B59B6)],
     roomGradientLocations: [0, 0.3, 0.7, 1],
     narration: BilingualText(
       en: "The moon rose over the little house. Teddy lay in bed, staring at the ceiling. His eyes felt wide open. 'I need something calm to help me relax,' he thought.",
@@ -51,7 +51,7 @@ final List<StoryScene> sleepScenes = [
   ),
   StoryScene(
     id: 'bright',
-    roomGradient: [Color(0xFF1E1B4B), Color(0xFF312E81), Color(0xFF4C1D95), Color(0xFF1E1B4B)],
+    roomGradient: [Color(0xFF7C3AED), Color(0xFF9D5CF0), Color(0xFFBBA4F8), Color(0xFF7C3AED)],
     roomGradientLocations: [0, 0.3, 0.7, 1],
     narration: BilingualText(
       en: "Teddy opened his favorite storybook. The stars on the cover twinkled. But the room was glowing—someone had left the big lamp on! 'It's too bright to feel sleepy,' Teddy sighed.",
@@ -61,35 +61,16 @@ final List<StoryScene> sleepScenes = [
       en: 'What should Teddy do to feel sleepy?',
       es: '¿Qué debe hacer Teddy para sentir sueño?',
     ),
-    options: [
-      StoryOption(
-        id: 'lightsOff',
-        emoji: '🌙',
-        label: BilingualText(en: 'Dim the lights', es: 'Bajar las luces'),
-        correct: true,
-        acknowledge: BilingualText(
-          en: "Teddy turned down the lamp. The room grew soft and cozy. 'Much better,' he whispered.",
-          es: 'Teddy bajó la lámpara. El cuarto se volvió suave y acogedor. "Mucho mejor", susurró.',
-        ),
-        feedback: BilingualText(
-          en: "A dark room tells your body it's time to sleep. The moon gives just enough light!",
-          es: '¡Un cuarto oscuro le dice a tu cuerpo que es hora de dormir! La luna da suficiente luz.',
-        ),
-      ),
-      StoryOption(
-        id: 'lightsOn',
-        emoji: '💡',
-        label: BilingualText(en: 'Brighter lights', es: 'Más luces'),
-        correct: false,
-        acknowledge: BilingualText(
-          en: "Teddy turned on more lights. But bright lights keep us awake!",
-          es: 'Teddy encendió más luces. ¡Pero las luces brillantes nos mantienen despiertos!',
-        ),
-        feedback: BilingualText(
-          en: 'Bright lights keep us awake! Our bodies need darkness to feel sleepy.',
-          es: '¡Las luces brillantes nos mantienen despiertos! Nuestro cuerpo necesita oscuridad.',
-        ),
-      ),
+    options: [],
+    sceneType: SceneType.tapCollect,
+    completionEmoji: '🌙',
+    tapItems: [
+      TapItem(emoji: '📖', label: BilingualText(en: 'Storybook', es: 'Libro de cuentos'), isHealthy: true),
+      TapItem(emoji: '🌙', label: BilingualText(en: 'Night light', es: 'Luz nocturna'), isHealthy: true),
+      TapItem(emoji: '🎵', label: BilingualText(en: 'Calm music', es: 'Música tranquila'), isHealthy: true),
+      TapItem(emoji: '📱', label: BilingualText(en: 'Phone', es: 'Teléfono'), isHealthy: false),
+      TapItem(emoji: '💡', label: BilingualText(en: 'Bright lamp', es: 'Lámpara brillante'), isHealthy: false),
+      TapItem(emoji: '☕', label: BilingualText(en: 'Hot chocolate', es: 'Chocolate caliente'), isHealthy: false),
     ],
     tip: BilingualText(
       en: 'Keep your room dark at bedtime',
@@ -98,7 +79,7 @@ final List<StoryScene> sleepScenes = [
   ),
   StoryScene(
     id: 'teeth',
-    roomGradient: [Color(0xFF1A1744), Color(0xFF261E5C), Color(0xFF3B2D7A), Color(0xFF1A1744)],
+    roomGradient: [Color(0xFF6D28D9), Color(0xFF8B5CF6), Color(0xFFB39AF8), Color(0xFF6D28D9)],
     roomGradientLocations: [0, 0.3, 0.7, 1],
     narration: BilingualText(
       en: "Teddy pulled his cozy blanket up. Wait! He remembered something. 'Before we sleep, we always brush our teeth,' his mom had said. Teddy hopped out of bed.",
@@ -108,35 +89,14 @@ final List<StoryScene> sleepScenes = [
       en: 'What should Teddy do before bed?',
       es: '¿Qué debe hacer Teddy antes de dormir?',
     ),
-    options: [
-      StoryOption(
-        id: 'brush',
-        emoji: '🪥',
-        label: BilingualText(en: 'Brush teeth', es: 'Cepillarse los dientes'),
-        correct: true,
-        acknowledge: BilingualText(
-          en: "Teddy went to the bathroom and brushed his teeth. Clean and fresh! 'Now I'm ready for bed,' he smiled.",
-          es: 'Teddy fue al baño y se cepilló los dientes. ¡Limpio y fresco! "Ahora estoy listo para dormir", sonrió.',
-        ),
-        feedback: BilingualText(
-          en: 'Brushing teeth before bed keeps them healthy and is part of a good bedtime routine!',
-          es: '¡Cepillarse los dientes antes de dormir los mantiene sanos y es parte de una buena rutina!',
-        ),
-      ),
-      StoryOption(
-        id: 'skip',
-        emoji: '😴',
-        label: BilingualText(en: 'Skip brushing', es: 'Saltarse el cepillado'),
-        correct: false,
-        acknowledge: BilingualText(
-          en: "Teddy jumped back in bed. But skipping brushing isn't part of a healthy bedtime!",
-          es: 'Teddy saltó de vuelta a la cama. ¡Pero saltarse el cepillado no es parte de una rutina sana!',
-        ),
-        feedback: BilingualText(
-          en: 'Brushing teeth before bed keeps your smile healthy. Always include it in your routine!',
-          es: '¡Cepillarse antes de dormir mantiene tu sonrisa sana! Siempre inclúyelo en tu rutina.',
-        ),
-      ),
+    options: [],
+    sceneType: SceneType.sorting,
+    completionEmoji: '🪥',
+    sortingSteps: [
+      SortingStep(emoji: '🧸', text: BilingualText(en: 'Put on cozy pajamas', es: 'Ponerse el pijama acogedor')),
+      SortingStep(emoji: '🪥', text: BilingualText(en: 'Brush your teeth', es: 'Cepillarse los dientes')),
+      SortingStep(emoji: '🌙', text: BilingualText(en: 'Dim the lights', es: 'Bajar las luces')),
+      SortingStep(emoji: '🛏️', text: BilingualText(en: 'Get into bed', es: 'Meterse en la cama')),
     ],
     tip: BilingualText(
       en: 'Brush your teeth before bed every night',
@@ -145,7 +105,7 @@ final List<StoryScene> sleepScenes = [
   ),
   StoryScene(
     id: 'bedtime',
-    roomGradient: [Color(0xFF110F2E), Color(0xFF1A1744), Color(0xFF241E52), Color(0xFF110F2E)],
+    roomGradient: [Color(0xFF5B21B6), Color(0xFF7C3AED), Color(0xFF9D5CF0), Color(0xFF5B21B6)],
     roomGradientLocations: [0, 0.3, 0.7, 1],
     narration: BilingualText(
       en: "Teddy's eyes felt heavy. The clock showed his usual bedtime. But the TV in the living room was still on—his favorite show! 'Just one more episode?' Teddy wondered.",

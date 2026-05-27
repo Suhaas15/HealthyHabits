@@ -4,7 +4,7 @@ import '../../models.dart';
 final List<StoryScene> movementScenes = [
   StoryScene(
     id: 'afterSchool',
-    roomGradient: [Color(0xFF1A0F00), Color(0xFF2C1A00), Color(0xFF4A2800), Color(0xFF1A0F00)],
+    roomGradient: [Color(0xFFF97316), Color(0xFFFBBF24), Color(0xFF84CC16), Color(0xFFF97316)],
     roomGradientLocations: [0, 0.3, 0.7, 1],
     narration: BilingualText(
       en: "School was finally over! Hoppy had finished all her homework. Now she had free time until dinner. She looked out the window at the sunny backyard, then glanced at the TV...",
@@ -23,45 +23,49 @@ final List<StoryScene> movementScenes = [
   ),
   StoryScene(
     id: 'rainy',
-    roomGradient: [Color(0xFF1A1200), Color(0xFF2E1F00), Color(0xFF4A3200), Color(0xFF1A1200)],
+    roomGradient: [Color(0xFFEA580C), Color(0xFFF97316), Color(0xFFFCD34D), Color(0xFFEA580C)],
     roomGradientLocations: [0, 0.3, 0.7, 1],
     narration: BilingualText(
       en: "It was a rainy Saturday and Hoppy was stuck inside. She pressed her nose against the window. 'I can't go outside,' she sighed. But then she had an idea...",
       es: 'Era un sábado lluvioso y Hoppy estaba atrapada adentro. Presionó su nariz contra la ventana. "No puedo salir", suspiró. Pero entonces tuvo una idea...',
     ),
     question: BilingualText(en: 'How can Hoppy move when stuck inside?', es: '¿Cómo puede moverse Hoppy cuando está adentro?'),
-    options: [
-      StoryOption(id: 'danceJump', emoji: '💃', label: BilingualText(en: 'Dance & jump', es: 'Bailar y saltar'), correct: true,
-        acknowledge: BilingualText(en: "Hoppy turned on music and started dancing and jumping around the living room. This is so fun!", es: '¡Hoppy puso música y empezó a bailar y saltar por la sala. ¡Esto es muy divertido!'),
-        feedback: BilingualText(en: "You don't need to go outside to be active! Dancing, jumping, yoga, or even cleaning up can keep your body moving!", es: '¡No necesitas salir para estar activo! Bailar, saltar, yoga, ¡o incluso limpiar puede mantener tu cuerpo en movimiento!')),
-      StoryOption(id: 'lieSofa', emoji: '🛋️', label: BilingualText(en: 'Lie on the sofa', es: 'Acostarse en el sofá'), correct: false,
-        acknowledge: BilingualText(en: "Hoppy plopped on the sofa and stayed still all day. She felt bored and sluggish by the evening.", es: 'Hoppy se tiró en el sofá y se quedó quieta todo el día. Se sintió aburrida y lenta para la tarde.'),
-        feedback: BilingualText(en: "Lying still all day makes your muscles weak and your mood low. Even a 10-minute dance party counts as exercise!", es: 'Quedarse quieto todo el día debilita tus músculos y baja tu ánimo. ¡Incluso una fiesta de baile de 10 minutos cuenta como ejercicio!')),
+    options: [],
+    sceneType: SceneType.tapCollect,
+    completionEmoji: '💃',
+    tapItems: [
+      TapItem(emoji: '💃', label: BilingualText(en: 'Dancing', es: 'Bailar'), isHealthy: true),
+      TapItem(emoji: '🧘', label: BilingualText(en: 'Yoga', es: 'Yoga'), isHealthy: true),
+      TapItem(emoji: '🤸', label: BilingualText(en: 'Jumping jacks', es: 'Saltos de tijera'), isHealthy: true),
+      TapItem(emoji: '🛋️', label: BilingualText(en: 'Lying on sofa', es: 'Tumbarse en el sofá'), isHealthy: false),
+      TapItem(emoji: '📺', label: BilingualText(en: 'Watching TV', es: 'Ver televisión'), isHealthy: false),
+      TapItem(emoji: '😴', label: BilingualText(en: 'Taking a long nap', es: 'Dormir una siesta larga'), isHealthy: false),
     ],
     tip: BilingualText(en: 'Dance or jump indoors on rainy days', es: 'Baila o salta adentro en días lluviosos'),
   ),
   StoryScene(
     id: 'park',
-    roomGradient: [Color(0xFF211500), Color(0xFF362000), Color(0xFF573400), Color(0xFF211500)],
+    roomGradient: [Color(0xFFFBBF24), Color(0xFFF59E0B), Color(0xFF84CC16), Color(0xFFFBBF24)],
     roomGradientLocations: [0, 0.3, 0.7, 1],
     narration: BilingualText(
       en: "Hoppy and her family were going to the park! It was just a few blocks away. Her dad jingled the car keys, but her mom said, 'The weather is so nice today...'",
       es: '¡Hoppy y su familia iban al parque! Estaba a solo unas cuadras. Su papá tintineó las llaves del coche, pero su mamá dijo: "El clima está muy lindo hoy..."',
     ),
     question: BilingualText(en: 'How should Hoppy get to the park?', es: '¿Cómo debe ir Hoppy al parque?'),
-    options: [
-      StoryOption(id: 'walkThere', emoji: '🚶', label: BilingualText(en: 'Walk there', es: 'Caminar allá'), correct: true,
-        acknowledge: BilingualText(en: "Hoppy skipped and bounced all the way to the park! She was already warmed up and ready to play!", es: '¡Hoppy saltó y brincó todo el camino al parque! ¡Ya estaba calentada y lista para jugar!'),
-        feedback: BilingualText(en: "Walking instead of driving is extra exercise! Short trips on foot add up and keep your body healthy.", es: '¡Caminar en lugar de manejar es ejercicio adicional! Los viajes cortos a pie se suman y mantienen tu cuerpo sano.')),
-      StoryOption(id: 'drive', emoji: '🚗', label: BilingualText(en: 'Drive there', es: 'Ir en coche'), correct: false,
-        acknowledge: BilingualText(en: "They drove to the park. But they missed out on a nice walk in the fresh air!", es: 'Fueron al parque en coche. ¡Pero se perdieron un lindo paseo al aire libre!'),
-        feedback: BilingualText(en: "Short walks add up! Walking just 15 minutes adds movement to your day and is good for the planet too!", es: '¡Las caminatas cortas se acumulan! Caminar solo 15 minutos añade movimiento a tu día y también es bueno para el planeta.')),
+    options: [],
+    sceneType: SceneType.sorting,
+    completionEmoji: '🚶',
+    sortingSteps: [
+      SortingStep(emoji: '👟', text: BilingualText(en: 'Put on your shoes', es: 'Ponerse los zapatos')),
+      SortingStep(emoji: '🙆', text: BilingualText(en: 'Warm up your muscles', es: 'Calentar los músculos')),
+      SortingStep(emoji: '⚽', text: BilingualText(en: 'Play and exercise hard', es: 'Jugar y ejercitarse')),
+      SortingStep(emoji: '🧘', text: BilingualText(en: 'Cool down and stretch', es: 'Enfriarse y estirarse')),
     ],
     tip: BilingualText(en: 'Walk or bike for short trips instead of driving', es: 'Camina o anda en bici para viajes cortos en vez de ir en coche'),
   ),
   StoryScene(
     id: 'wakeup',
-    roomGradient: [Color(0xFF1A1000), Color(0xFF2B1A00), Color(0xFF442A00), Color(0xFF1A1000)],
+    roomGradient: [Color(0xFFFF7C2A), Color(0xFFFCD34D), Color(0xFF86EFAC), Color(0xFFFF7C2A)],
     roomGradientLocations: [0, 0.3, 0.7, 1],
     narration: BilingualText(
       en: "Beep beep beep! Hoppy's alarm went off. She opened one eye and groaned. Her body felt stiff from sleeping. The snooze button was right there...",

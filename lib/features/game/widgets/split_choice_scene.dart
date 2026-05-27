@@ -88,7 +88,7 @@ class _SplitChoiceSceneState extends State<SplitChoiceScene> {
     if (widget.scenePhase == StoryPhase.narrating) {
       final text = widget.scene.narration.get(widget.language);
       widget.speakTip(text, widget.language);
-      Future.delayed(const Duration(milliseconds: 3500), () {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && widget.scenePhase == StoryPhase.narrating) {
           widget.onNarrationComplete();
         }
@@ -154,21 +154,22 @@ class _SplitChoiceSceneState extends State<SplitChoiceScene> {
       child: Row(
         children: [
           SizedBox(
-            width: 72,
+            width: 80,
             child: GestureDetector(
               onTap: widget.onBack,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
+                  color: Colors.white.withOpacity(0.90),
                   borderRadius: BorderRadius.circular(16),
+                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.12), blurRadius: 6)],
                 ),
                 child: Text(
                   '← ${widget.storyStrings.back.get(widget.language)}',
                   style: GoogleFonts.nunito(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF1E293B),
                   ),
                 ),
               ),
@@ -195,34 +196,41 @@ class _SplitChoiceSceneState extends State<SplitChoiceScene> {
 
     // ---- Narration + question section ----
     final narrationSection = Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: Column(
         children: [
-          Text(
-            widget.scene.narration.get(widget.language),
-            style: GoogleFonts.nunito(
-              fontSize: 17,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-              height: 1.4,
-              shadows: const [
-                Shadow(color: Color(0x4D000000), offset: Offset(0, 1), blurRadius: 3),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.95),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.12), blurRadius: 10, offset: const Offset(0, 4))],
+            ),
+            child: Column(
+              children: [
+                Text(
+                  widget.scene.narration.get(widget.language),
+                  style: GoogleFonts.nunito(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF1E293B),
+                    height: 1.4,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  widget.scene.question.get(widget.language),
+                  style: GoogleFonts.nunito(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    color: const Color(0xFFD97706),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ],
             ),
-            textAlign: TextAlign.center,
           ),
-          if (isAsking || isResponding) ...[
-            const SizedBox(height: 6),
-            Text(
-              widget.scene.question.get(widget.language),
-              style: GoogleFonts.nunito(
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-                color: const Color(0xFFFCD34D),
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
         ],
       ),
     );
@@ -272,8 +280,8 @@ class _SplitChoiceSceneState extends State<SplitChoiceScene> {
             Text(
               acknowledgeText,
               style: GoogleFonts.nunito(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
                 color: Colors.white,
                 fontStyle: FontStyle.italic,
               ),
@@ -284,9 +292,9 @@ class _SplitChoiceSceneState extends State<SplitChoiceScene> {
               Text(
                 feedbackText,
                 style: GoogleFonts.nunito(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white.withOpacity(0.9),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white.withOpacity(0.95),
                   height: 1.4,
                 ),
                 textAlign: TextAlign.center,
@@ -326,8 +334,8 @@ class _SplitChoiceSceneState extends State<SplitChoiceScene> {
           child: Text(
             '${isLastScene ? widget.storyStrings.finish.get(widget.language) : widget.storyStrings.next.get(widget.language)} →',
             style: GoogleFonts.nunito(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
               color: Colors.white,
             ),
           ),
@@ -349,8 +357,8 @@ class _SplitChoiceSceneState extends State<SplitChoiceScene> {
           child: Text(
             '${widget.storyStrings.retry.get(widget.language)} 🔄',
             style: GoogleFonts.nunito(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
               color: Colors.white,
             ),
           ),

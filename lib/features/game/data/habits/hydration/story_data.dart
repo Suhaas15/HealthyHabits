@@ -4,7 +4,7 @@ import '../../models.dart';
 final List<StoryScene> hydrationScenes = [
   StoryScene(
     id: 'wakeup',
-    roomGradient: [Color(0xFF0D1F3C), Color(0xFF1E3A5F), Color(0xFF1E40AF), Color(0xFF0D1F3C)],
+    roomGradient: [Color(0xFF38BDF8), Color(0xFF06B6D4), Color(0xFF67E8F9), Color(0xFF38BDF8)],
     roomGradientLocations: [0, 0.3, 0.7, 1],
     narration: BilingualText(
       en: "Droppy woke up feeling very thirsty. Her mouth was dry and her tummy was rumbling. 'I need something to drink right away!' she said, jumping out of bed.",
@@ -23,45 +23,49 @@ final List<StoryScene> hydrationScenes = [
   ),
   StoryScene(
     id: 'playing',
-    roomGradient: [Color(0xFF0A2540), Color(0xFF0E3D6B), Color(0xFF1251A3), Color(0xFF0A2540)],
+    roomGradient: [Color(0xFF3B82F6), Color(0xFF60A5FA), Color(0xFF7DD3FC), Color(0xFF3B82F6)],
     roomGradientLocations: [0, 0.3, 0.7, 1],
     narration: BilingualText(
       en: "Droppy was playing outside on a sunny day. She was running and jumping and having so much fun! Soon she felt hot and her mouth was getting dry again.",
       es: 'Droppy estaba jugando afuera en un día soleado. Corría y saltaba y se divertía mucho. ¡Pronto se sintió acalorada y su boca se secaba de nuevo!',
     ),
     question: BilingualText(en: 'What should Droppy drink when playing outside?', es: '¿Qué debe beber Droppy cuando juega afuera?'),
-    options: [
-      StoryOption(id: 'waterBottle', emoji: '🍶', label: BilingualText(en: 'Water bottle', es: 'Botella de agua'), correct: true,
-        acknowledge: BilingualText(en: "Droppy grabbed her water bottle and drank several big gulps. She felt energized and ready to keep playing!", es: 'Droppy agarró su botella de agua y bebió varios grandes tragos. ¡Se sintió llena de energía y lista para seguir jugando!'),
-        feedback: BilingualText(en: "Water keeps your body cool and gives you energy to play! Drink water before, during, and after outdoor activities.", es: '¡El agua mantiene tu cuerpo fresco y te da energía para jugar! Bebe agua antes, durante y después de actividades al aire libre.')),
-      StoryOption(id: 'juiceBox', emoji: '🧃', label: BilingualText(en: 'Juice box', es: 'Caja de jugo'), correct: false,
-        acknowledge: BilingualText(en: "Droppy grabbed the juice box. But it has lots of sugar that doesn't hydrate as well as water!", es: 'Droppy agarró la caja de jugo. ¡Pero tiene mucha azúcar que no hidrata tan bien como el agua!'),
-        feedback: BilingualText(en: "Juice has a lot of sugar. When you're active and sweating, plain water is the best way to stay hydrated!", es: 'El jugo tiene mucha azúcar. Cuando estás activo y sudas, ¡el agua simple es la mejor forma de mantenerse hidratado!')),
+    options: [],
+    sceneType: SceneType.tapCollect,
+    completionEmoji: '🍶',
+    tapItems: [
+      TapItem(emoji: '💧', label: BilingualText(en: 'Water', es: 'Agua'), isHealthy: true),
+      TapItem(emoji: '🍎', label: BilingualText(en: 'Juicy fruit', es: 'Fruta jugosa'), isHealthy: true),
+      TapItem(emoji: '🍵', label: BilingualText(en: 'Herbal tea', es: 'Té de hierbas'), isHealthy: true),
+      TapItem(emoji: '🥤', label: BilingualText(en: 'Soda', es: 'Refresco'), isHealthy: false),
+      TapItem(emoji: '☕', label: BilingualText(en: 'Coffee', es: 'Café'), isHealthy: false),
+      TapItem(emoji: '🍬', label: BilingualText(en: 'Candy', es: 'Dulces'), isHealthy: false),
     ],
     tip: BilingualText(en: 'Carry a water bottle when playing outside', es: 'Lleva una botella de agua cuando juegas afuera'),
   ),
   StoryScene(
     id: 'lunch',
-    roomGradient: [Color(0xFF0D2352), Color(0xFF1A3A7A), Color(0xFF1E4DB7), Color(0xFF0D2352)],
+    roomGradient: [Color(0xFF06B6D4), Color(0xFF38BDF8), Color(0xFFA5F3FC), Color(0xFF06B6D4)],
     roomGradientLocations: [0, 0.3, 0.7, 1],
     narration: BilingualText(
       en: "Lunchtime! Droppy sat down to eat her favorite sandwich. She looked at the drinks on the table—a glass of cold water and a colorful sugary drink. 'Hmm, what should I pick?' she wondered.",
       es: '¡Hora del almuerzo! Droppy se sentó a comer su sándwich favorito. Miró las bebidas sobre la mesa: un vaso de agua fría y una bebida azucarada colorida. "Hmm, ¿qué debo elegir?" se preguntó.',
     ),
     question: BilingualText(en: 'What should Droppy drink with her lunch?', es: '¿Qué debe beber Droppy con su almuerzo?'),
-    options: [
-      StoryOption(id: 'water', emoji: '💧', label: BilingualText(en: 'Water', es: 'Agua'), correct: true,
-        acknowledge: BilingualText(en: "Droppy chose the water! 'This helps me stay focused in school this afternoon,' she smiled.", es: '¡Droppy eligió el agua! "Esto me ayuda a concentrarme en la escuela esta tarde", sonrió.'),
-        feedback: BilingualText(en: "Drinking water with meals helps your digestion and keeps you focused. Aim for 6-8 cups of water every day!", es: 'Beber agua con las comidas ayuda a tu digestión y te mantiene concentrado. ¡Trata de beber 6-8 vasos de agua cada día!')),
-      StoryOption(id: 'sugaryDrink', emoji: '🧃', label: BilingualText(en: 'Sugary drink', es: 'Bebida azucarada'), correct: false,
-        acknowledge: BilingualText(en: "Droppy picked the colorful sugary drink. But all that sugar makes it hard to concentrate later!", es: 'Droppy eligió la bebida colorida azucarada. ¡Pero todo ese azúcar dificulta la concentración más tarde!'),
-        feedback: BilingualText(en: "Sugary drinks can give you a quick burst then a crash. Water gives you steady energy all day long!", es: 'Las bebidas azucaradas pueden darte un impulso rápido y luego un bajón. ¡El agua te da energía constante todo el día!')),
+    options: [],
+    sceneType: SceneType.sorting,
+    completionEmoji: '💧',
+    sortingSteps: [
+      SortingStep(emoji: '🪑', text: BilingualText(en: 'Sit down at the table', es: 'Sentarse en la mesa')),
+      SortingStep(emoji: '🥛', text: BilingualText(en: 'Pour a glass of water', es: 'Servir un vaso de agua')),
+      SortingStep(emoji: '🥪', text: BilingualText(en: 'Eat your meal slowly', es: 'Comer despacio')),
+      SortingStep(emoji: '💧', text: BilingualText(en: 'Refill water if thirsty', es: 'Rellenar agua si tienes sed')),
     ],
     tip: BilingualText(en: 'Choose water with every meal', es: 'Elige agua con cada comida'),
   ),
   StoryScene(
     id: 'exercise',
-    roomGradient: [Color(0xFF0A1E40), Color(0xFF0E2E60), Color(0xFF1244A0), Color(0xFF0A1E40)],
+    roomGradient: [Color(0xFF29B6F6), Color(0xFF4FC3F7), Color(0xFFB3E5FC), Color(0xFF29B6F6)],
     roomGradientLocations: [0, 0.3, 0.7, 1],
     narration: BilingualText(
       en: "Droppy was about to start her gymnastics class! She was so excited she ran straight to the mat. 'Wait!' called her coach. 'Did you drink water before exercising?'",

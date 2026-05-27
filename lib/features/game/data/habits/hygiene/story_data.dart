@@ -4,7 +4,7 @@ import '../../models.dart';
 final List<StoryScene> hygieneScenes = [
   StoryScene(
     id: 'beforeEating',
-    roomGradient: [Color(0xFF021A10), Color(0xFF042E1E), Color(0xFF06402A), Color(0xFF021A10)],
+    roomGradient: [Color(0xFF10B981), Color(0xFF34D399), Color(0xFF6EE7B7), Color(0xFF10B981)],
     roomGradientLocations: [0, 0.3, 0.7, 1],
     narration: BilingualText(
       en: "Bubbles had been playing in the garden all morning. Now it was lunchtime! She ran inside and was about to grab her sandwich when her mom asked, 'Did you wash your hands?'",
@@ -23,45 +23,49 @@ final List<StoryScene> hygieneScenes = [
   ),
   StoryScene(
     id: 'sneeze',
-    roomGradient: [Color(0xFF032A18), Color(0xFF044A28), Color(0xFF046834), Color(0xFF032A18)],
+    roomGradient: [Color(0xFF059669), Color(0xFF10B981), Color(0xFF6EE7B7), Color(0xFF059669)],
     roomGradientLocations: [0, 0.3, 0.7, 1],
     narration: BilingualText(
       en: "Bubbles felt a tickle in her nose. 'Ah... ah... ACHOO!' She sneezed a big sneeze right in class. Her friend Lily looked over. 'Are you okay, Bubbles?'",
       es: 'Bubbles sintió un cosquilleo en su nariz. "Ah... ah... ¡ACHÚ!" Estornudó un gran estornudo justo en clase. Su amiga Lily miró. "¿Estás bien, Bubbles?"',
     ),
     question: BilingualText(en: 'What should Bubbles do after sneezing?', es: '¿Qué debe hacer Bubbles después de estornudar?'),
-    options: [
-      StoryOption(id: 'coverAndWash', emoji: '🤧', label: BilingualText(en: 'Cover & wash hands', es: 'Cubrirse y lavarse'), correct: true,
-        acknowledge: BilingualText(en: "Bubbles had covered her sneeze with her elbow and then went to wash her hands. 'That's the hygienic way!' smiled her teacher.", es: 'Bubbles se había cubierto el estornudo con el codo y luego fue a lavarse las manos. "¡Esa es la manera higiénica!" sonrió su maestra.'),
-        feedback: BilingualText(en: "Cover sneezes with your elbow (not hands!) so germs don't spread. Then wash your hands to stop germs from reaching others.", es: 'Cubre los estornudos con el codo (¡no las manos!) para que los gérmenes no se propaguen. Luego lávate las manos para evitar que los gérmenes lleguen a otros.')),
-      StoryOption(id: 'nothing', emoji: '😐', label: BilingualText(en: 'Do nothing', es: 'No hacer nada'), correct: false,
-        acknowledge: BilingualText(en: "Bubbles didn't cover or wash. The sneezing germs spread through the air and onto nearby surfaces!", es: '¡Bubbles no se cubrió ni se lavó. Los gérmenes del estornudo se propagaron por el aire y sobre las superficies cercanas!'),
-        feedback: BilingualText(en: "When you sneeze without covering, tiny droplets carrying germs fly up to 6 feet! Always cover your sneeze and wash up afterward.", es: 'Cuando estornudas sin cubrirte, ¡las pequeñas gotas con gérmenes vuelan hasta 2 metros! Siempre cúbrete el estornudo y lávate después.')),
+    options: [],
+    sceneType: SceneType.tapCollect,
+    completionEmoji: '🤧',
+    tapItems: [
+      TapItem(emoji: '🧼', label: BilingualText(en: 'Soap', es: 'Jabón'), isHealthy: true),
+      TapItem(emoji: '🤧', label: BilingualText(en: 'Tissue', es: 'Pañuelo'), isHealthy: true),
+      TapItem(emoji: '🚿', label: BilingualText(en: 'Washing hands', es: 'Lavarse las manos'), isHealthy: true),
+      TapItem(emoji: '🤝', label: BilingualText(en: 'Shaking hands (when sick)', es: 'Dar la mano (enfermo)'), isHealthy: false),
+      TapItem(emoji: '💨', label: BilingualText(en: 'Sneezing freely', es: 'Estornudar libre'), isHealthy: false),
+      TapItem(emoji: '😐', label: BilingualText(en: 'Doing nothing', es: 'No hacer nada'), isHealthy: false),
     ],
     tip: BilingualText(en: 'Cover sneezes with your elbow and wash hands after', es: 'Cúbrete el estornudo con el codo y lávate las manos después'),
   ),
   StoryScene(
     id: 'muddy',
-    roomGradient: [Color(0xFF042C1C), Color(0xFF064A2C), Color(0xFF076038), Color(0xFF042C1C)],
+    roomGradient: [Color(0xFF26A69A), Color(0xFF4DB6AC), Color(0xFFB2DFDB), Color(0xFF26A69A)],
     roomGradientLocations: [0, 0.3, 0.7, 1],
     narration: BilingualText(
       en: "Bubbles had been playing in the mud puddles all afternoon. She was covered head to toe in brown mud! She looked like a little mud monster. 'Time to go inside,' called her dad.",
       es: 'Bubbles había estado jugando en los charcos de barro toda la tarde. ¡Estaba cubierta de barro marrón de pies a cabeza! Parecía un pequeño monstruo de barro. "Hora de entrar", llamó su papá.',
     ),
     question: BilingualText(en: 'What should Bubbles do after playing in the mud?', es: '¿Qué debe hacer Bubbles después de jugar en el barro?'),
-    options: [
-      StoryOption(id: 'takeBath', emoji: '🛁', label: BilingualText(en: 'Take a bath', es: 'Bañarse'), correct: true,
-        acknowledge: BilingualText(en: "Bubbles took a warm bubbly bath and scrubbed off all the mud. She came out fresh and sparkling clean!", es: '¡Bubbles se dio un baño caliente con burbujas y se quitó todo el barro. ¡Salió fresca y reluciente limpia!'),
-        feedback: BilingualText(en: "Bathing removes dirt, germs, and sweat from your skin. Clean skin stays healthier and prevents rashes and infections!", es: 'Bañarse elimina la suciedad, los gérmenes y el sudor de tu piel. ¡La piel limpia se mantiene más sana y previene sarpullidos e infecciones!')),
-      StoryOption(id: 'stayDirty', emoji: '😬', label: BilingualText(en: 'Stay dirty', es: 'Quedarse sucio'), correct: false,
-        acknowledge: BilingualText(en: "Bubbles stayed muddy all evening. The dirt dried on her skin and started to itch and feel uncomfortable!", es: 'Bubbles se quedó sucia toda la tarde. ¡La suciedad se secó sobre su piel y empezó a picar y sentirse incómoda!'),
-        feedback: BilingualText(en: "Dirt left on your skin can cause irritation and let germs in. Regular bathing keeps your skin healthy and comfortable!", es: 'La suciedad sobre tu piel puede causar irritación y permitir que entren gérmenes. ¡Bañarse regularmente mantiene tu piel sana y cómoda!')),
+    options: [],
+    sceneType: SceneType.sorting,
+    completionEmoji: '🛁',
+    sortingSteps: [
+      SortingStep(emoji: '👕', text: BilingualText(en: 'Remove muddy clothes', es: 'Quitar la ropa sucia')),
+      SortingStep(emoji: '🚿', text: BilingualText(en: 'Wet your body', es: 'Mojarse el cuerpo')),
+      SortingStep(emoji: '🧼', text: BilingualText(en: 'Scrub with soap', es: 'Fregar con jabón')),
+      SortingStep(emoji: '✨', text: BilingualText(en: 'Rinse clean and dry off', es: 'Enjuagarse y secarse')),
     ],
     tip: BilingualText(en: 'Bathe after playing outside to clean off dirt and germs', es: 'Báñate después de jugar afuera para limpiar la suciedad y los gérmenes'),
   ),
   StoryScene(
     id: 'morning',
-    roomGradient: [Color(0xFF052E16), Color(0xFF074A20), Color(0xFF09602A), Color(0xFF052E16)],
+    roomGradient: [Color(0xFF22C55E), Color(0xFF4ADE80), Color(0xFF86EFAC), Color(0xFF22C55E)],
     roomGradientLocations: [0, 0.3, 0.7, 1],
     narration: BilingualText(
       en: "It was a school morning! Bubbles had 20 minutes before the bus came. Her backpack was ready, but she hadn't brushed her teeth or combed her hair yet. The clock was ticking...",

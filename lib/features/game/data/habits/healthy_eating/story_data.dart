@@ -4,7 +4,7 @@ import '../../models.dart';
 final List<StoryScene> healthyEatingScenes = [
   StoryScene(
     id: 'breakfast',
-    roomGradient: [Color(0xFF1C0505), Color(0xFF2D0808), Color(0xFF4A0E0E), Color(0xFF1C0505)],
+    roomGradient: [Color(0xFFFF6B6B), Color(0xFFFFA07A), Color(0xFFFF85A1), Color(0xFFFF6B6B)],
     roomGradientLocations: [0, 0.3, 0.7, 1],
     narration: BilingualText(
       en: "Good morning! Mango woke up feeling hungry. It was time for breakfast. In the kitchen, he saw two choices on the counter. His tummy was growling, but which food would give him energy for the whole day?",
@@ -23,45 +23,49 @@ final List<StoryScene> healthyEatingScenes = [
   ),
   StoryScene(
     id: 'snack',
-    roomGradient: [Color(0xFF260808), Color(0xFF3D0E0E), Color(0xFF6B1818), Color(0xFF260808)],
+    roomGradient: [Color(0xFFEF4444), Color(0xFFF97316), Color(0xFFFDA4AF), Color(0xFFEF4444)],
     roomGradientLocations: [0, 0.3, 0.7, 1],
     narration: BilingualText(
       en: "After school, Mango's tummy was rumbling. Snack time! He opened the fridge and the pantry. On one side was a crisp red apple and some peanut butter. On the other was a shiny bag of chips.",
       es: 'Después de la escuela, la barriga de Mango gruñía. ¡Hora del refrigerio! Abrió el refrigerador y la despensa. A un lado había una manzana roja crujiente y mantequilla de cacahuate. Al otro, una bolsa brillante de papas fritas.',
     ),
     question: BilingualText(en: 'What should Mango choose for his snack?', es: '¿Qué debe elegir Mango para su refrigerio?'),
-    options: [
-      StoryOption(id: 'applePeanut', emoji: '🍎', label: BilingualText(en: 'Apple with peanut butter', es: 'Manzana con mantequilla de cacahuate'), correct: true,
-        acknowledge: BilingualText(en: "Mango sliced the apple and dipped it in peanut butter. 'Crunchy and delicious!' he said with a grin.", es: 'Mango cortó la manzana y la mojó en mantequilla de cacahuate. "¡Crujiente y deliciosa!" dijo con una sonrisa.'),
-        feedback: BilingualText(en: "Fruits and nuts give you healthy energy! The apple provides vitamins and fiber, while peanut butter adds protein to keep you full longer.", es: 'Las frutas y nueces te dan energía saludable. La manzana aporta vitaminas y fibra, mientras que la mantequilla de cacahuate añade proteína para mantenerte lleno más tiempo.')),
-      StoryOption(id: 'chips', emoji: '🥔', label: BilingualText(en: 'Bag of chips', es: 'Bolsa de papas fritas'), correct: false,
-        acknowledge: BilingualText(en: "Mango grabbed the chips. They tasted good but were full of salt and had almost no nutrients!", es: '¡Mango agarró las papas fritas. Sabían bien pero estaban llenas de sal y tenían casi ningún nutriente!'),
-        feedback: BilingualText(en: "Chips are tasty but don't give your body what it needs to grow strong. Choose snacks with real ingredients like fruit, veggies, or nuts!", es: 'Las papas fritas son sabrosas pero no le dan a tu cuerpo lo que necesita para crecer fuerte. ¡Elige refrigerios con ingredientes reales como frutas, verduras o nueces!')),
+    options: [],
+    sceneType: SceneType.tapCollect,
+    completionEmoji: '🍎',
+    tapItems: [
+      TapItem(emoji: '🍎', label: BilingualText(en: 'Apple', es: 'Manzana'), isHealthy: true),
+      TapItem(emoji: '🥕', label: BilingualText(en: 'Carrot sticks', es: 'Palitos de zanahoria'), isHealthy: true),
+      TapItem(emoji: '🥜', label: BilingualText(en: 'Nuts', es: 'Nueces'), isHealthy: true),
+      TapItem(emoji: '🍟', label: BilingualText(en: 'French fries', es: 'Papas fritas'), isHealthy: false),
+      TapItem(emoji: '🍪', label: BilingualText(en: 'Cookies', es: 'Galletas'), isHealthy: false),
+      TapItem(emoji: '🥤', label: BilingualText(en: 'Soda', es: 'Refresco'), isHealthy: false),
     ],
     tip: BilingualText(en: 'Choose fruit and nuts for a healthy snack', es: 'Elige frutas y nueces para un refrigerio saludable'),
   ),
   StoryScene(
     id: 'lunchbox',
-    roomGradient: [Color(0xFF1C0808), Color(0xFF300D0D), Color(0xFF501515), Color(0xFF1C0808)],
+    roomGradient: [Color(0xFFFF7043), Color(0xFFFFAB40), Color(0xFFEC407A), Color(0xFFFF7043)],
     roomGradientLocations: [0, 0.3, 0.7, 1],
     narration: BilingualText(
       en: "It was Sunday night and Mango was packing his lunchbox for school. He stood in front of the kitchen, thinking about what to put inside. A healthy mix? Or just the things he loved the most?",
       es: 'Era el domingo por la noche y Mango estaba empacando su fiambrera para la escuela. Estaba frente a la cocina, pensando qué meter adentro. ¿Una mezcla saludable? ¿O solo las cosas que más le gustaban?',
     ),
     question: BilingualText(en: 'How should Mango fill his lunchbox?', es: '¿Cómo debe llenar Mango su fiambrera?'),
-    options: [
-      StoryOption(id: 'veggiesSandwich', emoji: '🥗', label: BilingualText(en: 'Veggies & sandwich', es: 'Verduras y sándwich'), correct: true,
-        acknowledge: BilingualText(en: "Mango packed colorful veggies, a turkey sandwich, and a piece of fruit. His lunchbox looked like a rainbow!", es: 'Mango empacó verduras coloridas, un sándwich de pavo y una fruta. ¡Su fiambrera parecía un arcoíris!'),
-        feedback: BilingualText(en: "A colorful lunch means lots of different nutrients! Try to eat every color of the rainbow throughout your day—each color has special benefits!", es: '¡Un almuerzo colorido significa muchos nutrientes diferentes! Intenta comer cada color del arcoíris durante tu día. ¡Cada color tiene beneficios especiales!')),
-      StoryOption(id: 'cookiesChips', emoji: '🍪', label: BilingualText(en: 'Just cookies & chips', es: 'Solo galletas y papas fritas'), correct: false,
-        acknowledge: BilingualText(en: "Mango packed only cookies and chips. They tasted amazing but his body wouldn't get the fuel it needed!", es: 'Mango empacó solo galletas y papas fritas. ¡Sabían increíble pero su cuerpo no obtendría el combustible que necesitaba!'),
-        feedback: BilingualText(en: "A lunch with only snack foods leaves your body without the proteins, vitamins, and fiber it needs to grow and stay healthy!", es: 'Un almuerzo con solo bocadillos deja a tu cuerpo sin las proteínas, vitaminas y fibra que necesita para crecer y mantenerse sano.')),
+    options: [],
+    sceneType: SceneType.sorting,
+    completionEmoji: '🥗',
+    sortingSteps: [
+      SortingStep(emoji: '🥦', text: BilingualText(en: 'Pick a fruit or veggie', es: 'Elegir una fruta o verdura')),
+      SortingStep(emoji: '🍗', text: BilingualText(en: 'Add a protein (chicken or beans)', es: 'Agregar proteína (pollo o frijoles)')),
+      SortingStep(emoji: '🍞', text: BilingualText(en: 'Include a whole grain', es: 'Incluir un grano integral')),
+      SortingStep(emoji: '💧', text: BilingualText(en: 'Pack water to drink', es: 'Empacar agua para beber')),
     ],
     tip: BilingualText(en: 'Pack a colorful lunchbox with different food groups', es: 'Empaca una fiambrera colorida con diferentes grupos de alimentos'),
   ),
   StoryScene(
     id: 'dinner',
-    roomGradient: [Color(0xFF1C0606), Color(0xFF300B0B), Color(0xFF501212), Color(0xFF1C0606)],
+    roomGradient: [Color(0xFFFF6B9D), Color(0xFFFF8C42), Color(0xFFFFD166), Color(0xFFFF6B9D)],
     roomGradientLocations: [0, 0.3, 0.7, 1],
     narration: BilingualText(
       en: "Dinner was on the table! Mango's plate had a yummy piece of chicken, rice, and... broccoli. He poked at the green trees with his fork. 'Do I have to eat the broccoli?' he sighed.",
