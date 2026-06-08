@@ -1,5 +1,23 @@
 import 'package:flutter/material.dart';
 
+// Scene type enum
+enum SceneType { binaryChoice, tapCollect, sorting }
+
+// A step in a sorting game
+class SortingStep {
+  final String emoji;
+  final BilingualText text;
+  const SortingStep({required this.emoji, required this.text});
+}
+
+// An item in a tap-to-collect game
+class TapItem {
+  final String emoji;
+  final BilingualText label;
+  final bool isHealthy;
+  const TapItem({required this.emoji, required this.label, required this.isHealthy});
+}
+
 // Bilingual text container
 class BilingualText {
   final String en;
@@ -28,34 +46,6 @@ class StoryOption {
   });
 }
 
-enum SceneType {
-  choices,
-  tapCollect,
-  sorting,
-}
-
-class TapItem {
-  final String emoji;
-  final BilingualText label;
-  final bool isHealthy;
-
-  const TapItem({
-    required this.emoji,
-    required this.label,
-    required this.isHealthy,
-  });
-}
-
-class SortingStep {
-  final String emoji;
-  final BilingualText text;
-
-  const SortingStep({
-    required this.emoji,
-    required this.text,
-  });
-}
-
 // One scene in the story
 class StoryScene {
   final String id;
@@ -66,9 +56,9 @@ class StoryScene {
   final List<StoryOption> options;
   final BilingualText tip;
   final SceneType sceneType;
-  final String? completionEmoji;
   final List<TapItem>? tapItems;
   final List<SortingStep>? sortingSteps;
+  final String completionEmoji;
 
   const StoryScene({
     required this.id,
@@ -78,10 +68,10 @@ class StoryScene {
     required this.question,
     required this.options,
     required this.tip,
-    this.sceneType = SceneType.choices,
-    this.completionEmoji,
+    this.sceneType = SceneType.binaryChoice,
     this.tapItems,
     this.sortingSteps,
+    this.completionEmoji = '⭐',
   });
 }
 

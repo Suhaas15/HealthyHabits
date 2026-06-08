@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
+import 'dart:math';
+import 'dart:ui' as ui;
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
@@ -8,7 +10,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 const String _apiUrl = 'https://openrouter.ai/api/v1/chat/completions';
 const String _model = 'google/gemini-2.5-flash-image';
-const String _manifestKey = '@habit_images_complete_v1';
+const String _manifestKey = '@habit_images_manifest_v2';
+const Duration _networkTimeout = Duration(seconds: 25);
+const int _maxRetriesPerImage = 3;
 
 // Module-level session cache — survives provider rebuilds within same session
 final Map<String, Map<String, String>> _sessionCache = {};
@@ -27,7 +31,7 @@ class ImageGenerationProvider extends ChangeNotifier {
   Map<String, String> _images = {};
   bool _isLoading = false;
   ImageProgress _progress = const ImageProgress(done: 0, total: 0);
-  bool _skipped = false;
+  String? _errorMessage;
 
   ImageGenerationProvider({
     required this.habitId,
@@ -38,6 +42,8 @@ class ImageGenerationProvider extends ChangeNotifier {
   Map<String, String> get images => Map.unmodifiable(_images);
   bool get isLoading => _isLoading;
   ImageProgress get progress => _progress;
+  String? get errorMessage => _errorMessage;
+  bool get hasError => _errorMessage != null && _errorMessage!.isNotEmpty;
 
   List<String> get _keys => [...imagePrompts.keys, 'ending'];
   Map<String, String> get _prompts => {...imagePrompts, 'ending': endingPrompt};
@@ -58,6 +64,121 @@ class ImageGenerationProvider extends ChangeNotifier {
     await Directory(dir).create(recursive: true);
   }
 
+  Future<void> _generateLocalPlaceholder({
+    required String filePath,
+    required String title,
+    String? subtitle,
+  }) async {
+    // Simple deterministic illustration that doesn't require network credits.
+    const int w = 1024;
+    const int h = 1024;
+    final recorder = ui.PictureRecorder();
+    final canvas = ui.Canvas(
+      recorder,
+      ui.Rect.fromLTWH(0, 0, w.toDouble(), h.toDouble()),
+    );
+
+    final seed = title.hashCode ^ (subtitle?.hashCode ?? 0) ^ habitId.hashCode;
+    final rng = Random(seed);
+    Color randColor(double a) => Color.fromARGB(
+      255,
+      60 + rng.nextInt(160),
+      60 + rng.nextInt(160),
+      60 + rng.nextInt(160),
+    ).withOpacity(a);
+
+    final c1 = randColor(1);
+    final c2 = randColor(1);
+    final c3 = randColor(1);
+    final bgPaint = ui.Paint()
+      ..shader = ui.Gradient.linear(
+        const ui.Offset(0, 0),
+        ui.Offset(w.toDouble(), h.toDouble()),
+        [c1, c2, c3],
+        [0, 0.55, 1],
+      );
+    canvas.drawRect(ui.Rect.fromLTWH(0, 0, w.toDouble(), h.toDouble()), bgPaint);
+
+    // Soft bubbles
+    for (int i = 0; i < 18; i++) {
+      final cx = rng.nextDouble() * w;
+      final cy = rng.nextDouble() * h;
+      final r = 26 + rng.nextDouble() * 90;
+      canvas.drawCircle(
+        ui.Offset(cx, cy),
+        r,
+        ui.Paint()..color = Colors.white.withOpacity(0.08 + rng.nextDouble() * 0.08),
+      );
+    }
+
+    // Paper-ish overlay
+    canvas.drawRect(
+      ui.Rect.fromLTWH(0, 0, w.toDouble(), h.toDouble()),
+      ui.Paint()..color = Colors.black.withOpacity(0.06),
+    );
+
+    // Text label
+    final tp = TextPainter(
+      text: TextSpan(
+        text: title,
+        style: const TextStyle(
+          color: Color(0xFFF8FAFC),
+          fontSize: 88,
+          fontWeight: FontWeight.w800,
+          shadows: [
+            Shadow(
+              color: Color(0x66000000),
+              offset: Offset(0, 4),
+              blurRadius: 14,
+            )
+          ],
+        ),
+      ),
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+      maxLines: 2,
+      ellipsis: '…',
+    )..layout(maxWidth: 900);
+    tp.paint(canvas, ui.Offset((w - tp.width) / 2, 420));
+
+    if (subtitle != null && subtitle.isNotEmpty) {
+      final st = TextPainter(
+        text: TextSpan(
+          text: subtitle,
+          style: const TextStyle(
+            color: Color(0xFFE2E8F0),
+            fontSize: 40,
+            fontWeight: FontWeight.w600,
+            shadows: [
+              Shadow(
+                color: Color(0x55000000),
+                offset: Offset(0, 2),
+                blurRadius: 10,
+              )
+            ],
+          ),
+        ),
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.ltr,
+        maxLines: 2,
+        ellipsis: '…',
+      )..layout(maxWidth: 900);
+      st.paint(canvas, ui.Offset((w - st.width) / 2, 540));
+    }
+
+    final picture = recorder.endRecording();
+    final img = await picture.toImage(w, h);
+    final bytes = await img.toByteData(format: ui.ImageByteFormat.png);
+    if (bytes == null) throw Exception('Failed to encode placeholder image');
+    await File(filePath).writeAsBytes(bytes.buffer.asUint8List());
+
+    // Marker to indicate this key is a placeholder (used to decide whether to upgrade to AI later).
+    try {
+      await File('$filePath.placeholder').writeAsString('local');
+    } catch (_) {}
+  }
+
+
   // ── Manifest helpers ───────────────────────────────────────────────────────
   Future<Map<String, dynamic>> _readManifest() async {
     try {
@@ -70,21 +191,26 @@ class ImageGenerationProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> _markComplete() async {
+  Future<void> _markComplete(String source) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final m = await _readManifest();
-      m[habitId] = true;
+      // source: 'ai' or 'local'
+      m[habitId] = source;
       await prefs.setString(_manifestKey, jsonEncode(m));
     } catch (_) {}
   }
 
-  Future<bool> _isComplete() async {
+  Future<String?> _getSource() async {
     try {
       final m = await _readManifest();
-      return m[habitId] == true;
+      final v = m[habitId];
+      if (v is String) return v;
+      // migrate from legacy bool manifests (treat true as ai)
+      if (v == true) return 'ai';
+      return null;
     } catch (_) {
-      return false;
+      return null;
     }
   }
 
@@ -116,7 +242,7 @@ class ImageGenerationProvider extends ChangeNotifier {
       final bytes = base64Decode(base64Data);
       await File(filePath).writeAsBytes(bytes);
     } else if (url.startsWith('http')) {
-      final response = await http.get(Uri.parse(url));
+      final response = await http.get(Uri.parse(url)).timeout(_networkTimeout);
       if (response.statusCode != 200) {
         throw Exception('Download failed: ${response.statusCode}');
       }
@@ -149,7 +275,7 @@ class ImageGenerationProvider extends ChangeNotifier {
           {'role': 'user', 'content': prompt}
         ],
       }),
-    );
+    ).timeout(_networkTimeout);
 
     if (response.statusCode != 200) {
       String msg = 'API error: ${response.statusCode}';
@@ -195,16 +321,6 @@ class ImageGenerationProvider extends ChangeNotifier {
     return null;
   }
 
-  // ── Skip loading — use null fallbacks ────────────────────────────────────
-  void skipAndUseFallbacks() {
-    _skipped = true;
-    final map = <String, String>{};
-    // Leave map empty — emoji fallbacks will show in UI
-    _images = map;
-    _isLoading = false;
-    notifyListeners();
-  }
-
   // ── Main generation / cache-loading logic ─────────────────────────────────
   Future<void> generateAllImages() async {
     final keys = _keys;
@@ -222,8 +338,8 @@ class ImageGenerationProvider extends ChangeNotifier {
       return;
     }
 
-    _skipped = false;
     _isLoading = true;
+    _errorMessage = null;
     notifyListeners();
 
     // Level 3: file system cache
@@ -234,9 +350,19 @@ class ImageGenerationProvider extends ChangeNotifier {
       _progress = ImageProgress(done: keys.length, total: keys.length);
       _isLoading = false;
       notifyListeners();
-      final done = await _isComplete();
-      if (!done) await _markComplete();
-      return;
+      final source = await _getSource();
+
+      // If these were locally generated placeholders and we now have an API key,
+      // try upgrading to real AI images once and then cache them for future runs.
+      final apiKey = dotenv.env['EXPO_PUBLIC_OPENROUTER_API_KEY'] ?? '';
+      final canUpgrade = apiKey.isNotEmpty && source != 'ai';
+      if (!canUpgrade) return;
+
+      // Continue to regenerate via AI (overwriting cached files) and mark source as 'ai'.
+      _isLoading = true;
+      _errorMessage = null;
+      _progress = ImageProgress(done: 0, total: keys.length);
+      notifyListeners();
     }
 
     // Level 4: generate via LLM
@@ -244,59 +370,86 @@ class ImageGenerationProvider extends ChangeNotifier {
     notifyListeners();
 
     int completed = 0;
-    int saveFailures = 0;
     final dir = await _getDir();
     await _ensureDir(dir);
-
-    final results = await Future.wait(
-      keys.map((key) async {
-        try {
-          final imageUrl = await _generateSingleImage(prompts[key]!);
-          final filePath = _getFilePath(dir, key);
-          String finalUri = imageUrl;
-
-          try {
-            await _saveImage(filePath, imageUrl);
-            finalUri = filePath;
-          } catch (_) {
-            saveFailures++;
-          }
-
-          completed++;
-          _progress = ImageProgress(done: completed, total: keys.length);
-          notifyListeners();
-          return MapEntry(key, finalUri);
-        } catch (_) {
-          completed++;
-          _progress = ImageProgress(done: completed, total: keys.length);
-          notifyListeners();
-          return MapEntry<String, String?>(key, null);
-        }
-      }),
-    );
-
-    if (_skipped) return;
-
     final imageMap = <String, String>{};
-    for (final entry in results) {
-      if (entry.value != null) {
-        imageMap[entry.key] = entry.value!;
+
+    for (final key in keys) {
+      final prompt = prompts[key]!;
+      final filePath = _getFilePath(dir, key);
+      bool success = false;
+      String? lastErr;
+
+      for (int attempt = 1; attempt <= _maxRetriesPerImage; attempt++) {
+        try {
+          final imageUrl = await _generateSingleImage(prompt);
+          await _saveImage(filePath, imageUrl);
+          // If we successfully generated with AI, remove any placeholder marker.
+          try {
+            final marker = File('$filePath.placeholder');
+            if (await marker.exists()) await marker.delete();
+          } catch (_) {}
+          imageMap[key] = filePath;
+          success = true;
+          break;
+        } catch (e) {
+          lastErr = e.toString();
+          // tiny backoff
+          await Future.delayed(Duration(milliseconds: 250 * attempt));
+        }
+      }
+
+      // If OpenRouter generation fails (e.g. no credits), fall back to a local placeholder
+      // so the UI never degrades to emojis and the result can still be cached on device.
+      if (!success) {
+        try {
+          final title = key == 'ending' ? 'The End' : key.replaceAll('_', ' ');
+          await _generateLocalPlaceholder(filePath: filePath, title: title);
+          imageMap[key] = filePath;
+          success = true;
+        } catch (e) {
+          lastErr = e.toString();
+        }
+      }
+
+      completed++;
+      _progress = ImageProgress(done: completed, total: keys.length);
+      notifyListeners();
+
+      if (!success) {
+        _errorMessage = 'Failed generating image "$key": ${lastErr ?? 'unknown error'}';
+        _isLoading = false;
+        notifyListeners();
+        throw Exception(_errorMessage);
       }
     }
 
-    if (saveFailures == 0) {
-      await _markComplete();
-    }
-
+    // Mark source as AI only if we succeeded via OpenRouter for every key.
+    // Otherwise, keep it as local so we can retry upgrading later.
+    final allAi = await _noPlaceholderMarkers(keys);
+    await _markComplete(allAi ? 'ai' : 'local');
     _sessionCache[habitId] = imageMap;
     _images = imageMap;
     _isLoading = false;
     notifyListeners();
   }
 
+  Future<bool> _noPlaceholderMarkers(List<String> keys) async {
+    try {
+      final dir = await _getDir();
+      for (final key in keys) {
+        final fp = _getFilePath(dir, key);
+        if (await File('$fp.placeholder').exists()) return false;
+      }
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   void clearCache() {
-    _skipped = false;
     _images = {};
+    _errorMessage = null;
     notifyListeners();
   }
 }

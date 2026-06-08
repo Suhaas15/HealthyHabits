@@ -3,7 +3,6 @@ import '../game/data/models.dart';
 import 'widgets/app_header.dart';
 import 'widgets/habit_grid.dart';
 import 'widgets/floating_elements.dart';
-import 'widgets/bottom_nav.dart';
 import '../../core/constants/spacing.dart';
 
 class HomePage extends StatelessWidget {
@@ -49,7 +48,6 @@ class HomePage extends StatelessWidget {
                   ],
                 ),
               ),
-              const BottomNav(),
             ],
           ),
         ),

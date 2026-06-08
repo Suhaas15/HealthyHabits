@@ -65,6 +65,25 @@ class StoryEngineProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void completeSpecialScene() {
+    final scene = _sceneIndex >= 1 ? _scenes[_sceneIndex - 1] : null;
+    if (scene != null) {
+      final alreadyCollected = _collectedTips.any((t) => t.id == scene.id);
+      if (!alreadyCollected) {
+        _collectedTips = [
+          ..._collectedTips,
+          CollectedTip(
+            id: scene.id,
+            tip: scene.tip,
+            emoji: scene.completionEmoji,
+          ),
+        ];
+      }
+    }
+    _phase = StoryPhase.respondingCorrect;
+    notifyListeners();
+  }
+
   void selectOption(StoryOption option) {
     _selectedOptionId = option.id;
     if (option.correct) {

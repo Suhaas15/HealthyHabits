@@ -77,10 +77,10 @@ class _SplitChoiceSceneState extends State<SplitChoiceScene> {
       _prevSceneId = widget.scene.id;
       _displayOptions = _shuffleOptions(widget.scene.options);
     }
-    if (widget.scenePhase != oldWidget.scenePhase ||
-        widget.scene.id != oldWidget.scene.id ||
-        widget.language != oldWidget.language) {
+    if (widget.scenePhase != oldWidget.scenePhase || widget.scene.id != oldWidget.scene.id) {
       _handlePhaseChange();
+    } else if (widget.language != oldWidget.language) {
+      _handleLanguageChange();
     }
   }
 
@@ -95,6 +95,20 @@ class _SplitChoiceSceneState extends State<SplitChoiceScene> {
       });
     } else if (widget.scenePhase == StoryPhase.respondingCorrect ||
         widget.scenePhase == StoryPhase.respondingWrong) {
+      if (widget.selectedOptionId != null) {
+        final opt = widget.scene.options.where((o) => o.id == widget.selectedOptionId).firstOrNull;
+        if (opt != null) {
+          widget.speakTip(opt.acknowledge.get(widget.language), widget.language);
+        }
+      }
+    }
+  }
+
+  void _handleLanguageChange() {
+    final phase = widget.scenePhase;
+    if (phase == StoryPhase.narrating || phase == StoryPhase.asking) {
+      widget.speakTip(widget.scene.narration.get(widget.language), widget.language);
+    } else if (phase == StoryPhase.respondingCorrect || phase == StoryPhase.respondingWrong) {
       if (widget.selectedOptionId != null) {
         final opt = widget.scene.options.where((o) => o.id == widget.selectedOptionId).firstOrNull;
         if (opt != null) {

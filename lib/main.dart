@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'features/home/home_page.dart';
 import 'features/game/habit_game_page.dart';
 import 'features/game/data/models.dart';
+import 'features/home/widgets/bottom_nav.dart';
+import 'features/quiz/daily_quiz_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +20,7 @@ final _router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => _HomeShell(),
+      builder: (context, state) => const _HomeShell(),
     ),
     GoRoute(
       path: '/game/:habitId',
@@ -51,13 +53,64 @@ class HealthyHabitsApp extends StatelessWidget {
 }
 
 class _HomeShell extends StatelessWidget {
+  const _HomeShell();
+
+  @override
+  Widget build(BuildContext context) => const _TabShell();
+}
+
+class _TabShell extends StatefulWidget {
+  const _TabShell();
+
+  @override
+  State<_TabShell> createState() => _TabShellState();
+}
+
+class _TabShellState extends State<_TabShell> {
+  int _index = 0;
+
+  void _setIndex(int idx) {
+    if (idx == _index) return;
+    setState(() => _index = idx);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: HomePage(
-        onHabitPress: (HabitCard habit) {
-          context.go('/game/${habit.id}');
-        },
+      body: Column(
+        children: [
+          Expanded(
+            child: IndexedStack(
+              index: _index,
+              children: [
+                HomePage(
+                  onHabitPress: (HabitCard habit) {
+                    context.go('/game/${habit.id}');
+                  },
+                ),
+                const DailyQuizPage(),
+                const _PlaceholderPage(title: 'Progress'),
+                const _PlaceholderPage(title: 'Settings'),
+              ],
+            ),
+          ),
+          BottomNav(selectedIndex: _index, onSelect: _setIndex),
+        ],
+      ),
+    );
+  }
+}
+
+class _PlaceholderPage extends StatelessWidget {
+  final String title;
+  const _PlaceholderPage({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        '$title (coming soon)',
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
       ),
     );
   }

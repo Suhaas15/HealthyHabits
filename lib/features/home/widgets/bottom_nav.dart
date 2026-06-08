@@ -4,7 +4,14 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/colors.dart';
 
 class BottomNav extends StatelessWidget {
-  const BottomNav({super.key});
+  final int selectedIndex;
+  final ValueChanged<int> onSelect;
+
+  const BottomNav({
+    super.key,
+    required this.selectedIndex,
+    required this.onSelect,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +34,34 @@ class BottomNav extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _NavItem(emoji: '🏠', label: 'Home', isActive: true, delay: 0),
-            _NavItem(emoji: '📊', label: 'Progress', isActive: false, delay: 100),
-            _NavItem(emoji: '🏆', label: 'Rewards', isActive: false, delay: 200),
-            _NavItem(emoji: '⚙️', label: 'Settings', isActive: false, delay: 300),
+            _NavItem(
+              emoji: '🏠',
+              label: 'Home',
+              isActive: selectedIndex == 0,
+              delay: 0,
+              onTap: () => onSelect(0),
+            ),
+            _NavItem(
+              emoji: '🧠',
+              label: 'Daily Quiz',
+              isActive: selectedIndex == 1,
+              delay: 100,
+              onTap: () => onSelect(1),
+            ),
+            _NavItem(
+              emoji: '📊',
+              label: 'Progress',
+              isActive: selectedIndex == 2,
+              delay: 200,
+              onTap: () => onSelect(2),
+            ),
+            _NavItem(
+              emoji: '⚙️',
+              label: 'Settings',
+              isActive: selectedIndex == 3,
+              delay: 300,
+              onTap: () => onSelect(3),
+            ),
           ],
         ),
       ),
@@ -43,12 +74,14 @@ class _NavItem extends StatefulWidget {
   final String label;
   final bool isActive;
   final int delay;
+  final VoidCallback onTap;
 
   const _NavItem({
     required this.emoji,
     required this.label,
     required this.isActive,
     required this.delay,
+    required this.onTap,
   });
 
   @override
@@ -62,7 +95,10 @@ class _NavItemState extends State<_NavItem> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTapDown: (_) => setState(() => _scale = 0.9),
-      onTapUp: (_) => setState(() => _scale = 1.0),
+      onTapUp: (_) {
+        setState(() => _scale = 1.0);
+        widget.onTap();
+      },
       onTapCancel: () => setState(() => _scale = 1.0),
       child: AnimatedScale(
         scale: _scale,

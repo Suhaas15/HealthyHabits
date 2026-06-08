@@ -71,10 +71,10 @@ class _SortingSceneState extends State<SortingScene> {
       _initSteps();
       _showError = false;
     }
-    if (widget.scenePhase != oldWidget.scenePhase ||
-        widget.scene.id != oldWidget.scene.id ||
-        widget.language != oldWidget.language) {
+    if (widget.scenePhase != oldWidget.scenePhase || widget.scene.id != oldWidget.scene.id) {
       _handlePhaseChange();
+    } else if (widget.language != oldWidget.language) {
+      widget.speakTip(widget.scene.narration.get(widget.language), widget.language);
     }
   }
 

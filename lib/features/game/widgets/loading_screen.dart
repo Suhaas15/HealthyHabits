@@ -4,13 +4,15 @@ import 'package:google_fonts/google_fonts.dart';
 
 class LoadingScreen extends StatefulWidget {
   final ({int done, int total}) progress;
-  final VoidCallback? onSkip;
+  final String? errorText;
+  final VoidCallback? onRetry;
   final VoidCallback? onBack;
 
   const LoadingScreen({
     super.key,
     required this.progress,
-    this.onSkip,
+    this.errorText,
+    this.onRetry,
     this.onBack,
   });
 
@@ -19,13 +21,13 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-  bool _showSkip = false;
+  bool _showHelp = false;
 
   @override
   void initState() {
     super.initState();
     Future.delayed(const Duration(milliseconds: 4000), () {
-      if (mounted) setState(() => _showSkip = true);
+      if (mounted) setState(() => _showHelp = true);
     });
   }
 
@@ -98,34 +100,50 @@ class _LoadingScreenState extends State<LoadingScreen> {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                if (_showSkip && widget.onSkip != null) ...[
+                if (widget.errorText != null && widget.errorText!.isNotEmpty) ...[
+                  const SizedBox(height: 18),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 22),
+                    child: Text(
+                      widget.errorText!,
+                      style: GoogleFonts.nunito(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white.withOpacity(0.85),
+                        height: 1.35,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  if (widget.onRetry != null)
+                    GestureDetector(
+                      onTap: widget.onRetry,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.10),
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(color: Colors.white.withOpacity(0.45), width: 2),
+                        ),
+                        child: Text(
+                          'Retry',
+                          style: GoogleFonts.nunito(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                ] else if (_showHelp) ...[
                   const SizedBox(height: 24),
                   Text(
-                    'Taking too long?',
+                    'Generating images…',
                     style: GoogleFonts.nunito(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: Colors.white.withOpacity(0.6),
-                    ),
-                  ).animate().fadeIn(duration: 300.ms),
-                  const SizedBox(height: 10),
-                  GestureDetector(
-                    onTap: widget.onSkip,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.08),
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: Colors.white.withOpacity(0.4), width: 2),
-                      ),
-                      child: Text(
-                        'Skip & play with emojis',
-                        style: GoogleFonts.nunito(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
                     ),
                   ).animate().fadeIn(duration: 300.ms),
                 ],

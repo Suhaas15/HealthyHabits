@@ -12,9 +12,9 @@ import 'widgets/night_sky_background.dart';
 import 'widgets/story_intro.dart';
 import 'widgets/loading_screen.dart';
 import 'widgets/split_choice_scene.dart';
-import 'widgets/story_ending.dart';
 import 'widgets/tap_collect_scene.dart';
 import 'widgets/sorting_scene.dart';
+import 'widgets/story_ending.dart';
 
 class HabitGamePage extends StatelessWidget {
   final String habitId;
@@ -88,13 +88,19 @@ class _HabitGameViewState extends State<_HabitGameView> {
   Future<void> _generateImages() async {
     final imageProvider = context.read<ImageGenerationProvider>();
     final engine = context.read<StoryEngineProvider>();
-    await imageProvider.generateAllImages();
-    if (mounted) engine.startStory();
+    try {
+      await imageProvider.generateAllImages();
+      if (mounted) engine.startStory();
+    } catch (_) {
+      // Keep the user on the loading screen with an error message + retry option.
+      // (ImageGenerationProvider exposes errorMessage.)
+    }
   }
 
-  void _handleSkipImages() {
-    context.read<ImageGenerationProvider>().skipAndUseFallbacks();
-    context.read<StoryEngineProvider>().startStory();
+  Future<void> _handleRetryImages() async {
+    final engine = context.read<StoryEngineProvider>();
+    if (engine.phase != StoryPhase.loadingImages) engine.startLoading();
+    await _generateImages();
   }
 
   void _handleStart() {
@@ -188,7 +194,8 @@ class _HabitGameViewState extends State<_HabitGameView> {
                       done: imageProvider.progress.done,
                       total: imageProvider.progress.total,
                     ),
-                    onSkip: _handleSkipImages,
+                    errorText: imageProvider.errorMessage,
+                    onRetry: _handleRetryImages,
                     onBack: _handleBack,
                   );
                 }
@@ -202,7 +209,7 @@ class _HabitGameViewState extends State<_HabitGameView> {
                       scenePhase: phase,
                       language: language,
                       onNarrationComplete: engine.onNarrationComplete,
-                      onComplete: engine.completeScene,
+                      onComplete: engine.completeSpecialScene,
                       speakTip: audioProvider.speakTip,
                       onToggleLanguage: langProvider.toggleLanguage,
                       onBack: _handleBack,
@@ -218,7 +225,7 @@ class _HabitGameViewState extends State<_HabitGameView> {
                       scenePhase: phase,
                       language: language,
                       onNarrationComplete: engine.onNarrationComplete,
-                      onComplete: engine.completeScene,
+                      onComplete: engine.completeSpecialScene,
                       speakTip: audioProvider.speakTip,
                       onToggleLanguage: langProvider.toggleLanguage,
                       onBack: _handleBack,

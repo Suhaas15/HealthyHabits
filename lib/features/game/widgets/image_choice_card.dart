@@ -101,14 +101,22 @@ class ImageChoiceCard extends StatelessWidget {
                       ),
                       child: Center(
                         child: Container(
-                          width: 72,
-                          height: 72,
+                          width: 92,
+                          height: 92,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: Colors.white.withOpacity(0.12),
                           ),
                           child: Center(
-                            child: Text(emoji, style: const TextStyle(fontSize: 40)),
+                            child: Text(
+                              'Generating…',
+                              style: GoogleFonts.nunito(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white.withOpacity(0.85),
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ),
                       ),
